@@ -1,0 +1,6 @@
+interface:
+  display_name: "Playwright Scenario Testing"
+  short_description: "Scenario-driven Playwright testing workflows"
+  default_prompt: "Use $playwright-scenario-testing to turn this scenario into verified Playwright coverage."
+policy:
+  allow_implicit_invocation: true

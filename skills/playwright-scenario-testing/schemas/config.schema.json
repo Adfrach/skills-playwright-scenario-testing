@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Playwright Scenario Testing Configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version"],
+  "properties": {
+    "version": { "const": 1 },
+    "application": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["web", "api", "component", "electron", "extension", "mixed"] },
+        "framework": { "enum": ["auto", "react", "vue", "angular", "nextjs", "other"] }
+      }
+    },
+    "targets": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "defaultEnvironment": { "type": "string", "minLength": 1 },
+        "authorizedHosts": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "environments": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "baseUrlEnv": { "$ref": "#/$defs/envName" },
+              "apiBaseUrlEnv": { "$ref": "#/$defs/envName" },
+              "readOnly": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    },
+    "auth": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strategy": { "enum": ["auto", "none", "ui", "api", "storage-state"] },
+        "identityEnv": { "$ref": "#/$defs/envName" },
+        "passwordEnv": { "$ref": "#/$defs/envName" },
+        "tokenEnv": { "$ref": "#/$defs/envName" },
+        "storageStatePath": { "type": "string", "minLength": 1 },
+        "roles": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "identityEnv": { "$ref": "#/$defs/envName" },
+              "passwordEnv": { "$ref": "#/$defs/envName" },
+              "tokenEnv": { "$ref": "#/$defs/envName" },
+              "storageStatePath": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    },
+    "paths": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "scenarioRoots": { "$ref": "#/$defs/pathList" },
+        "e2eRoots": { "$ref": "#/$defs/pathList" },
+        "apiRoots": { "$ref": "#/$defs/pathList" },
+        "componentRoots": { "$ref": "#/$defs/pathList" },
+        "supportRoots": { "$ref": "#/$defs/pathList" },
+        "resultRoot": { "type": "string", "minLength": 1 },
+        "defectRoot": { "type": "string", "minLength": 1 }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "layerPolicy": { "enum": ["auto", "api", "e2e", "component", "combined"] },
+        "projects": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "maxDiagnosticCycles": { "type": "integer", "minimum": 1, "maximum": 3 },
+        "finalRerun": { "type": "boolean" },
+        "language": { "type": "string", "pattern": "^(auto|[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*)$" }
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "prd": { "type": "boolean" },
+        "testPlan": { "type": "boolean" },
+        "traceability": { "type": "boolean" },
+        "evidence": { "type": "boolean" },
+        "defects": { "type": "boolean" }
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/capabilityMode" },
+      "propertyNames": {
+        "enum": [
+          "api", "e2e", "component", "visual", "accessibility", "mobile", "i18n",
+          "files", "multiContext", "frames", "clock", "network", "realtime", "offline",
+          "canvas", "electron", "extension", "webmcp", "multiUser", "migration", "ci",
+          "coverage", "security", "performance"
+        ]
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "productionMutation": { "const": "deny" },
+        "securityMode": { "enum": ["design", "safe", "explicit"] },
+        "performanceMode": { "enum": ["design", "safe", "explicit"] },
+        "requireAuthorizedTarget": { "type": "boolean" },
+        "requireStoppingCondition": { "type": "boolean" }
+      }
+    },
+    "compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "minimumPlaywrightVersion": { "$ref": "#/$defs/semver" },
+        "maximumPlaywrightVersion": { "$ref": "#/$defs/semver" },
+        "strict": { "type": "boolean" }
+      }
+    }
+  },
+  "$defs": {
+    "envName": { "type": "string", "pattern": "^[A-Za-z_][A-Za-z0-9_]*$" },
+    "semver": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+([+-][0-9A-Za-z.-]+)?$" },
+    "pathList": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+    "capabilityMode": { "enum": ["auto", "enabled", "disabled"] }
+  }
+}
